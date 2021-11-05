@@ -9,6 +9,7 @@ RUN apt-get -y update && \
     apt-get install -y nginx \
     wget \
     git \
+    unzip \
     cmake \
     python3 \
     python3-opencv \
