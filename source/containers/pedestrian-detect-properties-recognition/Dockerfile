@@ -18,6 +18,7 @@ RUN apt-get -y update && \
 
 RUN python3 -m pip install --upgrade pip==21.2.1
 RUN pip3 install --no-cache Cython==0.29.24 \
+    tensorflow-gpu==2.5.0 \
     onnx==1.4.1 \
     numpy==1.19.5 \
     flask==1.1.2 \

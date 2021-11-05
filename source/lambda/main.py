@@ -22,7 +22,7 @@ def handler(event, context):
     # obtain image bytes
     request = json.loads(event['body'])
     image_base64_enc = request['image_base64_enc']
-    timestamp = request['timestamp']
+    conf_thresh = float(request['conf_thresh'])
     request_id = str(request['request_id'])
 
     # invoke Sagemaker endpoint to predict the skeleton
@@ -31,7 +31,8 @@ def handler(event, context):
         ContentType='application/json',
         Accept='application/json',
         Body=json.dumps({
-            'image_bytes': image_base64_enc
+            'image_bytes': image_base64_enc,
+            'conf_thresh': conf_thresh
         }),
     )
 
