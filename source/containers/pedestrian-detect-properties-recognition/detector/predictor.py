@@ -111,7 +111,7 @@ def transformation():
     t2 = time.time()
 
     # Inference
-    boxes, scores, class_ids = ObjectDetectionService.predict(image_data=image_data)
+    boxes, scores, class_ids = ObjectDetectionService.detect_pedestrian(image_data=image_data)
 
     boxes = boxes.tolist()
 
