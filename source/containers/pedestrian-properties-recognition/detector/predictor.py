@@ -108,7 +108,7 @@ def transformation():
 
     print('Total time cost = {} ms'.format(1000.0 * (t3 - t1)))
     print('Time cost of image decoding = {} ms'.format(1000.0 * (t2 - t1)))
-    print('Time cost of detection & properties recognition = {} ms'.format(1000.0 * (t3 - t2)))
+    print('Time cost of properties recognition = {} ms'.format(1000.0 * (t3 - t2)))
     print('Response = {}'.format(body))
 
     return flask.Response(response=json.dumps(body), status=200, mimetype='application/json')
