@@ -10,7 +10,6 @@ import time
 import pycuda.autoinit  # This is needed for initializing CUDA driver
 from yolo_with_plugins import TrtYOLO
 
-
 PEDESTRIAN_DETECTION_MODEL_FULL_PATH = '/opt/ml/model/yolov4-persons.trt'
 PROPERTIES_RECOGNITION_MODEL_FULL_PATH = '/opt/ml/model/multi_tasks_classifier_models/batch_499/'
 
@@ -22,6 +21,10 @@ CLASS_ID_NAME_LUT = {
     3: 'ignore region',
     4: 'crowd'
 }
+
+gpus = tf.config.experimental.list_physical_devices('GPU')
+for gpu in gpus:
+    tf.config.experimental.set_memory_growth(gpu, True)
 
 
 # A singleton for holding the model. This simply loads the model and holds it.
