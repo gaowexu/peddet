@@ -18,7 +18,7 @@ for gpu in gpus:
 
 # A singleton for holding the model. This simply loads the model and holds it.
 # It has a predict function that does a prediction based on the model and the input data.
-class ObjectDetectionService(object):
+class PedestrianPropertiesClassifier(object):
     classifier = None
 
     @classmethod
@@ -53,7 +53,7 @@ def ping():
 
     :return:
     """
-    classifier_model = ObjectDetectionService.load_model()
+    classifier_model = PedestrianPropertiesClassifier.load_model()
     status = 200 if classifier_model is not None else 404
     return flask.Response(response='\n', status=status, mimetype='application/json')
 
@@ -93,7 +93,7 @@ def transformation():
     image_data = (image_data - mean) / std
 
     image_data_batch = tf.constant([image_data])
-    [gender_probs, top_color_probs, down_color_probs] = ObjectDetectionService.classify_properties(image_data_batch)
+    [gender_probs, top_color_probs, down_color_probs] = PedestrianPropertiesClassifier.classify_properties(image_data_batch)
     gender_probs, top_color_probs, down_color_probs = gender_probs[0], top_color_probs[0], down_color_probs[0]
 
     t3 = time.time()
