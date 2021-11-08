@@ -35,7 +35,7 @@ class ObjectDetectionService(object):
 
     @classmethod
     def classify_properties(cls, roi_data):
-        _, classifier = cls.load_model()
+        classifier = cls.load_model()
         roi_data_batch = tf.constant([roi_data])
         [gender_probs, top_color_probs, down_color_probs] = classifier.predict(roi_data_batch)
         return gender_probs, top_color_probs, down_color_probs

@@ -16,7 +16,7 @@ RUN apt-get -y update && \
     python3-pip \
     && rm -rf /var/lib/apt/lists/*
 
-RUN python3 -m pip install --upgrade pip==21.2.1
+RUN python3 -m pip install --upgrade pip==21.3.1
 RUN pip3 install --no-cache Cython==0.29.24 \
     tensorflow-gpu==2.5.0 \
     onnx==1.4.1 \
