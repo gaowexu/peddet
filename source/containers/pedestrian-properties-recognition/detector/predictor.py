@@ -92,8 +92,7 @@ def transformation():
     std = np.array([0.224, 0.225, 0.229])   # BGR
     image_data = (image_data - mean) / std
 
-    image_data_batch = tf.constant([image_data])
-    [gender_probs, top_color_probs, down_color_probs] = PedestrianPropertiesClassifier.classify_properties(image_data_batch)
+    [gender_probs, top_color_probs, down_color_probs] = PedestrianPropertiesClassifier.classify_properties(image_data)
     gender_probs, top_color_probs, down_color_probs = gender_probs[0], top_color_probs[0], down_color_probs[0]
 
     t3 = time.time()

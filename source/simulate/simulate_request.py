@@ -32,14 +32,6 @@ class DetectorSimulator(object):
 
         return image_base64_enc
 
-    # @staticmethod
-    # def visualize(full_path, bbox_coords, bbox_scores, class_ids, class_names):
-    #     image = cv2.imread(full_path, cv2.IMREAD_COLOR)
-    #     image = image[:, :, ::-1]
-    #     ax = utils.viz.plot_bbox(image, bbox_coords, bbox_scores, class_ids, class_names=class_names, thresh=0.25)
-    #     plt.axis('off')
-    #     plt.show()
-
     def run(self):
         image_names = [f for f in os.listdir(self._test_images_dir) if f.endswith('jpg')]
         image_names = sorted(image_names)
@@ -53,7 +45,6 @@ class DetectorSimulator(object):
 
             # Step 2: send request to backend
             request_body = {
-                "conf_thresh": 0.75,
                 "request_id": 1242322,
                 "image_base64_enc": image_base64_enc
             }
@@ -69,28 +60,9 @@ class DetectorSimulator(object):
             response = json.loads(response.text)
             print('Response = {}'.format(response))
 
-            # bbox_coords = np.array(response['bbox_coords'])
-            # bbox_scores = np.array(response['bbox_scores'])
-            # class_names = np.array(response['class_names'])
-            # print('bbox_coords.shape = {}'.format(bbox_coords.shape))
-            # print('bbox_scores.shape = {}'.format(bbox_scores.shape))
-            # print('class_names.shape = {}'.format(class_names.shape))
-            #
-            # cls_ids = list()
-            # for cls_name in class_names:
-            #     cls_id = self._cls_name_to_id_mapping[cls_name[0]]
-            #     cls_ids.append([cls_id])
-            #
-            # self.visualize(
-            #     full_path,
-            #     np.array(bbox_coords),
-            #     np.array(bbox_scores),
-            #     np.array(cls_ids),
-            #     class_names=self._class_names_lut)
-
 
 if __name__ == '__main__':
     simulator = DetectorSimulator(
-        endpoint_url="https://2vtd9bjphh.execute-api.us-east-2.amazonaws.com/prod/",
+        endpoint_url="https://c6bxhdbra4.execute-api.us-east-2.amazonaws.com/prod/",
     )
     simulator.run()
