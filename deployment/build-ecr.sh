@@ -31,14 +31,14 @@ aws ecr get-login-password --region ${REGION} | docker login --username AWS --pa
 
 
 echo "---------------------------------------------------------------------------------------"
-echo "[Build] Build Pedestrian Detection & Properties Recognition Image (GPU Version)        "
+echo "[Build] Build Pedestrian Properties Recognition Image (GPU Version)        "
 echo "---------------------------------------------------------------------------------------"
 cd ${SOURCE_DIR}
-docker build -t ${IMAGE_NAME}:latest -f containers/pedestrian-detect-properties-recognition/Dockerfile containers/pedestrian-detect-properties-recognition/
+docker build -t ${IMAGE_NAME}:latest -f containers/pedestrian-properties-recognition/Dockerfile containers/pedestrian-properties-recognition/
 docker tag ${IMAGE_NAME}:latest ${DOMAIN}/${IMAGE_NAME}:latest
 
 echo "---------------------------------------------------------------------------------------"
-echo "[Push] Push Pedestrian Detection & Properties Recognition Image (GPU Version)          "
+echo "[Push] Push Pedestrian Properties Recognition Image (GPU Version)          "
 echo "---------------------------------------------------------------------------------------"
 cd ${SOURCE_DIR}
 aws ecr create-repository --repository-name ${IMAGE_NAME} --region ${REGION} >/dev/null 2>&1
