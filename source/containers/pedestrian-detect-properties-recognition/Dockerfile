@@ -1,6 +1,5 @@
-FROM ubuntu:18.04
+FROM nvidia/cuda:11.3.0-cudnn8-runtime-ubuntu18.04
 
-ENV DEBIAN_FRONTEND=noninteractive
 ENV PATH="/usr/local/cuda/bin:${PATH}"
 ENV LD_LIBRARY_PATH="/usr/local/cuda/lib64:${LD_LIBRARY_PATH}"
 
@@ -25,30 +24,8 @@ RUN pip3 install --no-cache Cython==0.29.24 \
     gevent==20.12.1 \
     gunicorn==20.0.4
 
-# Install CUDA
-RUN mkdir -p /opt/software
-RUN wget -c https://developer.download.nvidia.com/compute/cuda/repos/ubuntu1804/x86_64/cuda-ubuntu1804.pin -O /opt/software/cuda-ubuntu1804.pin
-RUN mv /opt/software/cuda-ubuntu1804.pin /etc/apt/preferences.d/cuda-repository-pin-600
-RUN wget -c https://developer.download.nvidia.com/compute/cuda/11.1.0/local_installers/cuda-repo-ubuntu1804-11-1-local_11.1.0-455.23.05-1_amd64.deb -O /opt/software/cuda-repo-ubuntu1804-11-1-local_11.1.0-455.23.05-1_amd64.deb
-RUN dpkg -i /opt/software/cuda-repo-ubuntu1804-11-1-local_11.1.0-455.23.05-1_amd64.deb
-RUN apt-key add /var/cuda-repo-ubuntu1804-11-1-local/7fa2af80.pub
-RUN apt-get update && \
-    apt-get -y install cuda
-
-# Install pycuda for python
-RUN pip3 install --no-cache  'pycuda<2021.1'
-
-# Install TensorRT and its dependencies
-RUN wget -c https://ip-camera-ai-saas.s3.amazonaws.com/software/nv-tensorrt-repo-ubuntu1804-cuda11.1-trt7.2.3.4-ga-20210226_1-1_amd64.deb -O /opt/software/nv-tensorrt-repo-ubuntu1804-cuda11.1-trt7.2.3.4-ga-20210226_1-1_amd64.deb
-RUN dpkg -i /opt/software/nv-tensorrt-repo-ubuntu1804-cuda11.1-trt7.2.3.4-ga-20210226_1-1_amd64.deb
-RUN apt-key add /var/nv-tensorrt-repo-ubuntu1804-cuda11.1-trt7.2.3.4-ga-20210226/7fa2af80.pub
-RUN apt-get -y update && \
-    apt-get -y install tensorrt
-RUN apt-get -y install python3-libnvinfer-dev
-
-# Download pedestrian detection TensorRT model & pedestrian properties recognition model
+# Download pedestrian properties recognition model
 RUN mkdir -p /opt/ml/model
-RUN wget -c https://workshop-anker.s3.amazonaws.com/models/yolov4-persons.trt -O /opt/ml/model/yolov4-persons.trt
 RUN wget -c https://workshop-anker.s3.amazonaws.com/models/multi_tasks_classifier_models.zip -O /opt/ml/model/multi_tasks_classifier_models.zip
 RUN cd /opt/ml/model/ && unzip multi_tasks_classifier_models.zip && rm -rf multi_tasks_classifier_models.zip
 

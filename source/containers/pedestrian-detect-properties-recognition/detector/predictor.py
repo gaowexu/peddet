@@ -1,5 +1,4 @@
 from __future__ import print_function
-import os
 import base64
 import flask
 import json
@@ -7,20 +6,10 @@ import cv2
 import numpy as np
 import tensorflow as tf
 import time
-import pycuda.autoinit  # This is needed for initializing CUDA driver
-from yolo_with_plugins import TrtYOLO
 
-PEDESTRIAN_DETECTION_MODEL_FULL_PATH = '/opt/ml/model/yolov4-persons.trt'
+
 PROPERTIES_RECOGNITION_MODEL_FULL_PATH = '/opt/ml/model/multi_tasks_classifier_models/batch_499/'
 
-CATEGORY_NUM = 5
-CLASS_ID_NAME_LUT = {
-    0: 'pedestrian',
-    1: 'rider',
-    2: 'partially-visible person',
-    3: 'ignore region',
-    4: 'crowd'
-}
 
 gpus = tf.config.experimental.list_physical_devices('GPU')
 for gpu in gpus:
@@ -30,7 +19,6 @@ for gpu in gpus:
 # A singleton for holding the model. This simply loads the model and holds it.
 # It has a predict function that does a prediction based on the model and the input data.
 class ObjectDetectionService(object):
-    detector = None
     classifier = None
 
     @classmethod
@@ -39,24 +27,11 @@ class ObjectDetectionService(object):
         get object detector for this instance, loading it if it is not already loaded
         :return:
         """
-        if cls.detector is None:
-            print('Initialize Detection Model...')
-            cls.detector = TrtYOLO(
-                model_full_path=PEDESTRIAN_DETECTION_MODEL_FULL_PATH,
-                category_num=CATEGORY_NUM,
-                letter_box=False)
-
         if cls.classifier is None:
             print('Initialize Classification Model... ')
             cls.classifier = tf.keras.models.load_model(PROPERTIES_RECOGNITION_MODEL_FULL_PATH)
 
-        return cls.detector, cls.classifier
-
-    @classmethod
-    def detect_pedestrian(cls, image_data):
-        detector, _ = cls.load_model()
-        boxes, scores, classes = detector.detect(img=image_data, conf_th=0.05)
-        return boxes, scores, classes
+        return cls.classifier
 
     @classmethod
     def classify_properties(cls, roi_data):
@@ -78,8 +53,8 @@ def ping():
 
     :return:
     """
-    detector_model, classifier_model = ObjectDetectionService.load_model()
-    status = 200 if (detector_model is not None and classifier_model is not None) else 404
+    classifier_model = ObjectDetectionService.load_model()
+    status = 200 if classifier_model is not None else 404
     return flask.Response(response='\n', status=status, mimetype='application/json')
 
 
@@ -96,7 +71,6 @@ def transformation():
         request_body = flask.request.data.decode('utf-8')
         request_body = json.loads(request_body)
         image_bytes = request_body['image_bytes']
-        conf_thresh = request_body['conf_thresh']
     else:
         return flask.Response(
             response='Object detector only supports application/json data',
@@ -111,41 +85,16 @@ def transformation():
     t2 = time.time()
 
     # Inference
-    boxes, scores, class_ids = ObjectDetectionService.detect_pedestrian(image_data=image_data)
+    image_data = cv2.resize(image_data, (100, 240))
+    image_data = image_data.astype(np.float32)
+    image_data /= 255.0
+    mean = np.array([0.456, 0.406, 0.485])  # BGR
+    std = np.array([0.224, 0.225, 0.229])   # BGR
+    image_data = (image_data - mean) / std
 
-    boxes = boxes.tolist()
-
-    ret_boxes = list()
-    ret_scores = list()
-    ret_gender_probs = list()
-    ret_top_color_probs = list()
-    ret_down_color_probs = list()
-
-    for index, score in enumerate(scores):
-        if float(score) < conf_thresh:
-            continue
-        if int(class_ids[index]) != 0:
-            continue
-
-        [x_min, y_min, x_max, y_max] = boxes[index]
-        ret_boxes.append([x_min, y_min, x_max, y_max])
-        confidence = float(score)
-        ret_scores.append(confidence)
-
-        roi_data = image_data[y_min:y_max, x_min:x_max]
-        roi_data = roi_data.astype(np.float32)
-        roi_data /= 255.0
-        mean = np.array([0.456, 0.406, 0.485])  # BGR
-        std = np.array([0.224, 0.225, 0.229])   # BGR
-        roi_data = (roi_data - mean) / std
-
-        roi_data_batch = tf.constant([roi_data])
-        [gender_probs, top_color_probs, down_color_probs] = ObjectDetectionService.classify_properties(roi_data_batch)
-        gender_probs, top_color_probs, down_color_probs = gender_probs[0], top_color_probs[0], down_color_probs[0]
-
-        ret_gender_probs.append(gender_probs)
-        ret_top_color_probs.append(top_color_probs)
-        ret_down_color_probs.append(down_color_probs)
+    image_data_batch = tf.constant([image_data])
+    [gender_probs, top_color_probs, down_color_probs] = ObjectDetectionService.classify_properties(image_data_batch)
+    gender_probs, top_color_probs, down_color_probs = gender_probs[0], top_color_probs[0], down_color_probs[0]
 
     t3 = time.time()
 
@@ -153,11 +102,9 @@ def transformation():
         'width': width,
         'height': height,
         'channels': channels,
-        'bbox_coords': ret_boxes,                   # shape = (N, 4)
-        'bbox_scores': ret_scores,                  # shape = (N, 1)
-        'gender_probs': ret_gender_probs,           # shape = (N, 3)
-        'top_color_probs': ret_top_color_probs,     # shape = (N, 12)
-        'down_color_probs': ret_down_color_probs    # shape = (N, 12)
+        'gender_probs': gender_probs.tolist(),           # shape = (3, )
+        'top_color_probs': top_color_probs.tolist(),     # shape = (12, )
+        'down_color_probs': down_color_probs.tolist()    # shape = (12, )
     }
 
     print('Total time cost = {} ms'.format(1000.0 * (t3 - t1)))
