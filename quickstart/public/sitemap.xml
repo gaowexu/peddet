@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+  xmlns:xhtml="http://www.w3.org/1999/xhtml">
+  
+  <url>
+    <loc>/</loc>
+  </url>
+  
+  <url>
+    <loc>/000_introduction/</loc>
+    <lastmod>2018-10-03T10:17:52-07:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/001_ec2_object_detection/</loc>
+  </url>
+  
+  <url>
+    <loc>/002_sagemaker_classifier/</loc>
+  </url>
+  
+  <url>
+    <loc>/003_deploy_and_test/</loc>
+  </url>
+  
+  <url>
+    <loc>/004_clean_resources/</loc>
+  </url>
+  
+  <url>
+    <loc>/001_ec2_object_detection/020_ec2_provision/</loc>
+    <lastmod>2018-10-03T10:17:52-07:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/001_ec2_object_detection/030_ec2_train_model/</loc>
+    <lastmod>2018-10-03T10:17:52-07:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/001_ec2_object_detection/040_darknet_weights_convert/</loc>
+    <lastmod>2018-10-03T10:17:52-07:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/002_sagemaker_classifier/050_sagemaker_provision/</loc>
+    <lastmod>2018-10-03T10:17:52-07:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/002_sagemaker_classifier/060_sagemaker_train_model/</loc>
+    <lastmod>2018-10-03T10:17:52-07:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/003_deploy_and_test/070_deploy/</loc>
+    <lastmod>2018-10-03T10:17:52-07:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/003_deploy_and_test/080_api_test/</loc>
+    <lastmod>2018-10-03T10:17:52-07:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/004_clean_resources/090_clean/</loc>
+    <lastmod>2018-10-03T10:17:52-07:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/categories/</loc>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>/authors/</loc>
+  </url>
+  
+  <url>
+    <loc>/tags/</loc>
+    <priority>0</priority>
+  </url>
+  
+</urlset>

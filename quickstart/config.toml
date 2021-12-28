@@ -1,0 +1,15 @@
+languageCode = "en-us"
+defaultContentLanguage = "en"
+title = "IP Camera AI SaaS Solution"
+theme = "learn"
+
+[blackfriday]
+hrefTargetBlank = true
+
+[params]
+themeVariant = "mine"
+disableLanguageSwitchingButton = true
+description = "IP Camera AI SaaS Solution"
+
+
+
